@@ -1,0 +1,5 @@
+gcn_out : 64
+egnn_in : 64
+egnn_emb_hid : 128
+egnn_emb_out : 64
+
