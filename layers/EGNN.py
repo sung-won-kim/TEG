@@ -27,7 +27,7 @@ class EGCL(nn.Module):
             nn.Linear(hid_dim, raw_dim)
         )
 
-    def msg_model(self, h_i, h_j, sqr_dist):  # raw feature가 들어가야함
+    def msg_model(self, h_i, h_j, sqr_dist):
         out = torch.cat([h_i, h_j, sqr_dist], dim=1)
         out = self.msg_mlp(out)
 
