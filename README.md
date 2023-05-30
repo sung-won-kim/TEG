@@ -21,7 +21,8 @@ Although Graph Neural Networks (GNNs) have been successful in node classificatio
 
 ## Datasets
 You can download the datasets, including `Amazon Clothing`, `Amazon Electronics`, `CoraFull`, `Coauthor-CS`, `DBLP`, and `OGBN-arxiv`, using the following link:  
-[Download datasets](https://kaistackr-my.sharepoint.com/personal/swkim_kaist_ac_kr/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fswkim%5Fkaist%5Fac%5Fkr%2FDocuments%2FTEG%2FTEG%5FKDD23%5FDataset&view=0)
+[Download datasets](https://kaistackr-my.sharepoint.com/:u:/g/personal/swkim_kaist_ac_kr/Ed9IcHS0JvVAm9XinhBFVs0B5fReV8VlsUVAWOERMTfOXQ)
+
 
 After extracting `dataset.zip`, put the `dataset` folder in the same directory as the `main.py` file.
 
