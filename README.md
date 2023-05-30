@@ -19,12 +19,18 @@ Although Graph Neural Networks (GNNs) have been successful in node classificatio
 - numpy=1.23.4
 - torch-geometric=2.0.3
 
+## Datasets
+You can download the datasets, including `Amazon Clothing`, `Amazon Electronics`, `CoraFull`, `Coauthor-CS`, `DBLP`, and `OGBN-arxiv`, using the following link:  
+[Download datasets](https://kaistackr-my.sharepoint.com/personal/swkim_kaist_ac_kr/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fswkim%5Fkaist%5Fac%5Fkr%2FDocuments%2FTEG%2FTEG%5FKDD23%5FDataset&view=0)
+
+After extracting `dataset.zip`, put the `dataset` folder in the same directory as the `main.py` file.
+
 ## How to run
 ```
 python main.py --dataset corafull --way 5 --shot 3
 ```
 ### Flags
-`dataset` : Amazon_clothing, Amazon_electronics, corafull, dblp, coauthorCS  
+`dataset` : Amazon_clothing, Amazon_electronics, corafull, dblp, coauthorCS, ogbn-arxiv  
 `way` : N-way  
 `shot` : K-shot  
 `qry` : M-query  
