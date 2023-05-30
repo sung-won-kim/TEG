@@ -121,7 +121,6 @@ def load_data(dataset_source):
         edges = data.edge_index
 
         num_nodes = max(max(edges[0]), max(edges[1])) + 1
-        # num_nodes = 232965
 
         adj = sp.coo_matrix((np.ones(len(edges[0])), (edges[0], edges[1])),
                             shape=(num_nodes, num_nodes))
@@ -163,13 +162,11 @@ def load_data(dataset_source):
         # train_idx, valid_idx, test_idx = split_idx["train"], split_idx["valid"], split_idx["test"]
         graph, labels = dataset[0] # graph: library-agnostic graph object
 
-        n1s=graph['edge_index'][0]
         n2s=graph['edge_index'][1]
 
         edges = torch.LongTensor(graph['edge_index'])
 
         num_nodes = graph['num_nodes']
-        # num_nodes = 232965
 
         adj = sp.coo_matrix((np.ones(len(n1s)), (n1s, n2s)),
                                         shape=(num_nodes, num_nodes))    
