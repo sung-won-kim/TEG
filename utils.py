@@ -8,6 +8,7 @@ import torch_geometric
 import scipy.sparse as sp
 import torch
 import scipy.io as sio
+import pickle
 
 valid_num_dic = {"Amazon_clothing": 17, "Amazon_electronics": 36, "dblp": 27}
 
@@ -16,7 +17,7 @@ def load_data(dataset_source):
     if dataset_source in ['Amazon_clothing', 'Amazon_electronics', 'dblp']:
         n1s = []
         n2s = []
-        for line in open(f"./data/{dataset_source}/{dataset_source}_network"):
+        for line in open(f"./dataset/{dataset_source}/{dataset_source}_network"):
             n1, n2 = line.strip().split("\t")
             n1s.append(int(n1))
             n2s.append(int(n2))
@@ -28,13 +29,13 @@ def load_data(dataset_source):
                             shape=(num_nodes, num_nodes))
 
         data_train = sio.loadmat(
-            f"./data/{dataset_source}/{dataset_source}_train.mat")
+            f"./dataset/{dataset_source}/{dataset_source}_train.mat")
         train_class = list(
             set(data_train["Label"].reshape((1, len(data_train["Label"])))[0])
         )
 
         data_test = sio.loadmat(
-            f"./data/{dataset_source}/{dataset_source}_test.mat")
+            f"./dataset/{dataset_source}/{dataset_source}_test.mat")
         class_list_test = list(
             set(data_test["Label"].reshape((1, len(data_test["Label"])))[0])
         )
@@ -78,7 +79,7 @@ def load_data(dataset_source):
 
     elif dataset_source == 'corafull':
         cora_full = torch_geometric.datasets.CitationFull(
-            './data', 'cora')
+            './dataset', 'cora')
 
         edges = cora_full.data.edge_index
 
@@ -92,8 +93,8 @@ def load_data(dataset_source):
 
         class_list = cora_full.data.y.unique().tolist()
 
-        class_list_train, class_list_valid, class_list_test = [[3, 8, 17, 20, 21, 24, 25, 26, 28, 32, 35, 36, 37, 38, 40, 42, 44, 47, 52, 55, 57, 62, 63, 67, 69], [
-            2, 51, 48, 27, 13, 54, 46, 64, 16, 68, 6, 31, 60, 33, 65, 43, 23, 19, 18, 34], [56, 14, 0, 11, 4, 10, 12, 49, 22, 15, 1, 59, 50, 58, 61, 41, 39, 30, 53, 29, 9, 5, 66, 45, 7]]
+        with open(file='./dataset/cora/cls_split.pkl', mode='rb') as f:
+            class_list_train, class_list_valid, class_list_test = pickle.load(f)
 
         id_by_class = {}
         for i in class_list:
@@ -114,7 +115,7 @@ def load_data(dataset_source):
         adj = sparse_mx_to_torch_sparse_tensor(adj)
 
     elif dataset_source == 'coauthorCS':
-        CS = Coauthor(root='./data/CS', name='CS')
+        CS = Coauthor(root='./dataset/CS', name='CS')
         data = CS.data
 
         edges = data.edge_index
@@ -130,8 +131,8 @@ def load_data(dataset_source):
 
         class_list = data.y.unique().tolist()
 
-        class_list_train, class_list_valid, class_list_test = [
-            [1, 4, 8, 9, 10], [2, 3, 7, 11, 14], [0, 5, 6, 12, 13]]
+        with open(file='./dataset/CS/cls_split.pkl', mode='rb') as f:
+            class_list_train, class_list_valid, class_list_test = pickle.load(f)
 
         id_by_class = {}
         for i in class_list:
@@ -150,6 +151,85 @@ def load_data(dataset_source):
         labels = torch.LongTensor(np.where(labels)[1])
 
         adj = sparse_mx_to_torch_sparse_tensor(adj)
+
+
+    elif dataset_source == 'ogbn-arxiv':
+
+        from ogb.nodeproppred import NodePropPredDataset
+
+        dataset = NodePropPredDataset(name = 'ogbn-arxiv')
+
+        split_idx = dataset.get_idx_split()
+        # train_idx, valid_idx, test_idx = split_idx["train"], split_idx["valid"], split_idx["test"]
+        graph, labels = dataset[0] # graph: library-agnostic graph object
+
+        n1s=graph['edge_index'][0]
+        n2s=graph['edge_index'][1]
+
+        edges = torch.LongTensor(graph['edge_index'])
+
+        num_nodes = graph['num_nodes']
+        # num_nodes = 232965
+
+        adj = sp.coo_matrix((np.ones(len(n1s)), (n1s, n2s)),
+                                        shape=(num_nodes, num_nodes))    
+        degree = np.sum(adj, axis=1)
+        degree = torch.FloatTensor(degree)
+        adj = normalize(adj + sp.eye(adj.shape[0]))
+        adj = sparse_mx_to_torch_sparse_tensor(adj)
+
+        features=torch.FloatTensor(graph['node_feat'])
+        labels=torch.LongTensor(labels).squeeze()
+
+        class_list = labels.unique().tolist()
+
+        with open(file='./dataset/ogbn_arxiv/cls_split.pkl', mode='rb') as f:
+            class_list_train, class_list_valid, class_list_test = pickle.load(f)
+
+        id_by_class = {}
+        for i in class_list:
+            id_by_class[i] = []
+        for id, cla in enumerate(labels.tolist()):
+            id_by_class[cla].append(id)
+
+
+    elif dataset_source == 'citeseer':
+        citeseer = torch_geometric.datasets.Planetoid(
+            './dataset', 'CiteSeer')
+
+        edges = citeseer.data.edge_index
+
+        num_nodes = max(max(edges[0]), max(edges[1])) + 1
+
+        adj = sp.coo_matrix((np.ones(len(edges[0])), (edges[0], edges[1])),
+                            shape=(num_nodes, num_nodes))
+
+        features = citeseer.data.x
+        labels = citeseer.data.y
+
+        class_list = citeseer.data.y.unique().tolist()
+
+        with open(file='./dataset/CiteSeer/cls_split.pkl', mode='rb') as f:
+            class_list_train, class_list_valid, class_list_test = pickle.load(f)
+
+        id_by_class = {}
+        for i in class_list:
+            id_by_class[i] = []
+        for id, cla in enumerate(labels.tolist()):
+            id_by_class[cla].append(id)
+
+        lb = preprocessing.LabelBinarizer()
+        labels = lb.fit_transform(labels)
+
+        degree = np.sum(adj, axis=1)
+        degree = torch.FloatTensor(degree)
+
+        adj = normalize_adj(adj + sp.eye(adj.shape[0]))
+        features = torch.FloatTensor(features)
+        labels = torch.LongTensor(np.where(labels)[1])
+
+        adj = sparse_mx_to_torch_sparse_tensor(adj)
+
 
     return (
         edges,
@@ -174,6 +254,14 @@ def normalize_adj(adj):
     d_mat_inv_sqrt = sp.diags(d_inv_sqrt)
     return adj.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt).tocoo()
 
+def normalize(mx):
+    """Row-normalize sparse matrix"""
+    rowsum = np.array(mx.sum(1))
+    r_inv = np.power(rowsum, -1).flatten()
+    r_inv[np.isinf(r_inv)] = 0.
+    r_mat_inv = sp.diags(r_inv)
+    mx = r_mat_inv.dot(mx)
+    return mx
 
 def accuracy(output, labels):
     preds = output.max(1)[1].type_as(labels)

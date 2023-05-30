@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--seed", type=int, default=4)
     parser.add_argument("--dataset", type=str,
-                        default="coauthorCS", choices=['Amazon_clothing', 'Amazon_electronics', 'corafull', 'dblp', 'coauthorCS'])
+                        default="ogbn-arxiv", choices=['Amazon_clothing', 'Amazon_electronics', 'corafull', 'dblp', 'coauthorCS', 'ogbn-arxiv'])
     parser.add_argument('--data_dir', type=str,
                         default='datasets', help='dir of datasets')
     parser.add_argument("--num_seed", type=int, default=5)
