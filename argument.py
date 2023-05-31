@@ -17,7 +17,7 @@ def parse_args():
                         default="ogbn-arxiv", choices=['Amazon_clothing', 'Amazon_electronics', 'corafull', 'dblp', 'coauthorCS', 'ogbn-arxiv'])
     parser.add_argument('--data_dir', type=str,
                         default='datasets', help='dir of datasets')
-    parser.add_argument("--num_seed", type=int, default=5)
+    parser.add_argument("--num_seed", type=int, default=1)
     parser.add_argument("--summary", type=str, default=timestr)
     parser.add_argument("--dropout", type=float, default=0.5)
     parser.add_argument("--way", type=int, default=5)  # N

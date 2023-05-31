@@ -162,6 +162,7 @@ def load_data(dataset_source):
         # train_idx, valid_idx, test_idx = split_idx["train"], split_idx["valid"], split_idx["test"]
         graph, labels = dataset[0] # graph: library-agnostic graph object
 
+        n1s=graph['edge_index'][0]
         n2s=graph['edge_index'][1]
 
         edges = torch.LongTensor(graph['edge_index'])
