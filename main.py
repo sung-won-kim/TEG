@@ -79,8 +79,6 @@ if __name__ == "__main__":
     acc_mean = np.mean(accs)
     acc_std = np.std(accs)
 
-    result = open(args.final_result, 'a')
-
     timestr = time.strftime("%m%d-%H%M")
     config_str = config2string(args)
 
